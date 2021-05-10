@@ -1,0 +1,9 @@
+---
+  - name: check uptime
+    hosts: webserver
+    tasks:
+       - name: check uptime
+         command: uptime
+         register: result
+       - debug:
+             var: result.stdout_lines
