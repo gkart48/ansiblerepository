@@ -1,6 +1,6 @@
 ---
   - name: check uptime
-    hosts: webserver
+    hosts: all
     tasks:
        - name: check uptime
          command: uptime
