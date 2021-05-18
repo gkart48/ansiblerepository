@@ -9,4 +9,4 @@
          shell: uptime
          register: result
        - debug:
-             msg: Server:- {{ ansible_hostname }}  uptime:- {{ result.stdout }}
+             msg: uptime:- {{ result.stdout }}
