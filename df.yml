@@ -1,0 +1,11 @@
+---
+- name: Check the disk space on clients
+  hosts: dev
+  become: true
+  become_user: root
+  tasks:
+     - name: Disk space output prints
+       shell: uname -r ; cat /etc/redhat-release
+       register: output
+     - debug:
+         msg: Please find the disk space details "{{ output.stdout_lines }}"

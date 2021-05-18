@@ -1,0 +1,11 @@
+---
+ - name: Check hostname and ip address of a client machine
+   hosts: dev
+   become: true
+   become_user: root
+   tasks:
+      - name: check hostname and ip address
+        debug:
+             msg: >
+                  Hostname is {{ansible_hostname}} and IP Address is {{ansible_all_ipv4_addresses}}
+

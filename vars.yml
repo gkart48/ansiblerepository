@@ -1,0 +1,22 @@
+---
+ - name: Create a directory and copy a file under the dir
+   hosts: webserver
+   become: true
+   become_user: root
+   vars:
+         dirpath: /tmp/custom/depratment
+         filename: userlist
+   tasks:
+     - name: dir create and place the file inside directory
+       file:
+          name: "{{dirpath}}"
+          state: directory
+          recurse: yes
+     - name: copy the file to directory 
+       copy:
+          src: /home/ansible/userlist
+          dest: "{{dirpath}}"
+          
+         
+
+

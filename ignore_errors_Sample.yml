@@ -1,0 +1,16 @@
+---
+- name: This is an example for block playbook
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+   - name: find a file path presented or not 
+     command: ls -l /opt/ansible/
+     register: output
+     ignore_errors: yes
+   - debug: 
+       msg: "{{ output.stderr_lines }}"
+ 
+
+      
+      

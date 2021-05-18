@@ -1,0 +1,16 @@
+---
+- name: Check httpd running or not 
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+   - name: Check the status of service
+     shell: stat=$(systemctl is-active httpd | sed 's/status=//g'); if [ "$stat" == "active" ] ; then echo running ; else echo "Not running";fi
+     register: status
+   - debug:
+      msg: "{{ status.stdout_lines[0] }}"
+   - name: Stopping the service if running
+     service:
+      name: httpd
+      state: stopped
+ 

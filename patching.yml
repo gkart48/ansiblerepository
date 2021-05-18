@@ -1,0 +1,48 @@
+---
+- name: This is a playbook to patch the client servers
+  hosts: all
+  become: true
+  become_user: root 
+  tasks:
+     - name: Check application is running or not 
+       shell: if ps -ef | grep httpd | grep -v grep > /dev/null ; then echo "process_running"; else echo "No application is running !!you can proceed next steps!!" ; fi
+       register: process_result
+     - debug:
+          msg: "{{ process_result.stdout }}" 
+     - name: Decision to proceed patching or not  
+       fail:
+          msg: Application process is running, Plz stop application and then proceed patching...
+       when: process_result.stdout == "process_running"
+     - name: Checking the Current kernel version before patching
+       command: uname -r
+       register: current_kernel
+     - debug:
+          msg: "{{ current_kernel.stdout }}"
+     - name: Checking kernel is latest to abort patching..
+       fail:
+         msg: Aborting !! Already kernel version is latest "{{ current_kernel.stdout}}"
+       when: current_kernel.stdout == "3.10.0-1160.25.1.el7.x86_64"
+     - name: Proceed to patch the server Now
+       yum:
+         name: 'kernel*'
+         state: latest
+     - name: Uptime check
+       shell: uptime 
+       register: uptime_check
+     - debug:
+         msg: "{{ uptime_check.stdout_lines }}"
+     - name: Validating if reboot is required or not
+       shell: kernel_now=$(rpm -qa --last kernel | awk '{print $1}' | sed 's/kernel-//g') ; kernel_new=$(uname -r) ; if [ "$kernel_now" != "$kernel_new" ] ; then echo "reboot_is_required";else echo "reboot_is_not_required";fi
+       register: reboot_check
+     - name: Decision to proceed reboot or not 
+       command: shutdown -r now 
+       async: 5
+       poll: 0
+     - name: Waiting for system bootup..  
+       pause: 
+         minutes: 5
+     - name: "Patching Completed"
+       command: uname -r 
+       register: new_kern
+     - debug:
+         msg: Post patching the kernel version is "{{new_kern.stdout}}"

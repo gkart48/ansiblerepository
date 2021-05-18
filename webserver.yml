@@ -1,0 +1,24 @@
+---
+ - name: Playbook for settingup webserver 
+   hosts: webserver
+   become: true
+   become_user: root
+   tasks:
+    - name: Install httpd package
+      yum:
+        name: httpd
+        state: latest
+        
+    - name: Copy a index.html file to webserver
+      copy:
+         src: /home/ansible/index.html
+         dest: /var/www/html/
+         mode: 0755
+         
+    - name: restart the httpd service
+      service:
+        name: httpd
+        state: restarted
+        enabled: true
+      
+     

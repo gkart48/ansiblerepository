@@ -1,0 +1,30 @@
+---
+  - name: This playbook is to install and start-apache
+    hosts: all
+    become: true
+    become_user: root
+    tasks:
+    - name: Install the httpd Package
+      yum:
+       name: httpd
+       state: latest
+      tags: install_http
+    
+    - name: Start the httpd service
+      service:
+       name: httpd
+       state: started
+      tags: start_http
+    
+    - name: copy index file
+      copy:
+       content: "This a new webpage with tags Added \n"
+       dest: /var/www/html/index.html
+      notify:
+       - restart_httpd
+    handlers:
+    - name: restart_httpd
+      service:
+        name: httpd
+        state: restarted
+     
